@@ -17,3 +17,9 @@ wheels/
 
 # Large pretrained ASR models (downloaded, not source)
 asr-project/models/
+
+# Report intermediates
+report/_nb/
+report/figures/pdfpage-*.png
+report/*.aux
+report/*.log
