@@ -1,7 +1,8 @@
 ---
 title: "An Offline Multilingual Speech Interface for an Airport Virtual Assistant"
-subtitle: "Intelligent Signal Processing, midterm Exercise 4 (words: 808)"
-author: David Cardozo
+subtitle: |
+  Exercise 4 (words: 800)\
+  Link: \textcolor{blue}{\url{https://hub.labs.coursera.org/connect/sharedfrwficmn}}
 date: 6 July 2026
 documentclass: tufte-handout
 classoption: [nobib, nols, justified]
@@ -10,7 +11,7 @@ header-includes: |
   \usepackage{booktabs}
 ---
 
-This report documents the prototype speech interface built for the client's airport virtual assistant (Task 4.1) and closes with a comparison against an ASR system deployed in the e-commerce industry (Task 4.2). The prototype is a Python application that recognises short travel phrases in English, Spanish and Italian entirely on the local machine, is evaluated on the client's fifteen recorded phrases plus two recordings made by the author, and reports a word error rate (WER) for every file.
+This report documents the prototype speech interface built for the client's airport virtual assistant (Task 4.1) and closes with a comparison against an ASR system deployed in the e-commerce industry (Task 4.2). The prototype is a Python application that recognises short travel phrases in English, Spanish and Italian entirely on the local machine; is evaluated on the client's fifteen recorded phrases plus two recordings made by the author; and reports a word error rate (WER) for every file.
 
 # The ASR package and its configuration
 
@@ -84,7 +85,7 @@ Spanish & own\_sentence2.wav & 0\,\% \\
 
 Spanish and Italian are recognised perfectly. English accounts for every remaining error (corpus WER 14.7 %), and inspection of Figure 5 shows the errors are near-homophone and tokenisation failures rather than noise: "check-in desk" decodes as "CHICKEN DESK" (one substitution plus one deletion once the hyphen is split), "suitcase" splits into "SUIT CASE", and one utterance gains a leading "AT". Preprocessing cannot fix these errors, which are vocabulary and segmentation limits of the compact streaming English model, but it did eliminate every onset-truncation error in the corpus.
 
-The two personal recordings were made on a laptop microphone. Figure 4 shows the raw decode of `own_sentence1.wav` mis-hearing three words ("WERE I CONFINED A TAXI"); after preprocessing the transcription is exact, and both personal recordings finish at 0 % WER (Figure 5).
+The two personal recordings were made on a laptop microphone. Figure 4 shows the raw decode of `own_sentence1.wav` mis-hearing three words ("WERE I CONFINED A TAXI"); after preprocessing, the transcription is exact, and both personal recordings finish at 0 % WER (Figure 5).
 
 ```{=latex}
 \medskip
@@ -102,7 +103,7 @@ The two personal recordings were made on a laptop microphone. Figure 4 shows the
 
 # ASR in e-commerce: Alibaba's Paraformer
 
-Alibaba's shopping platforms have run customer service on speech for years: by 2017 the AliMe assistant was already serving millions of voice- and text-based customer questions per day^[F.-L. Li et al., "AliMe Assist: An intelligent assistant for creating an innovative e-commerce experience," Proc. CIKM, 2017. doi:10.1145/3132847.3133169.]. The current generation of Alibaba's speech services is built on **Paraformer**^[Z. Gao, S. Zhang, I. McLoughlin and Z. Yan, "Paraformer: Fast and accurate parallel transformer for non-autoregressive end-to-end speech recognition," Proc. INTERSPEECH, 2022. arXiv:2206.08317.], a non-autoregressive model introduced in 2022 that emits the whole token sequence in a single parallel pass: a continuous integrate-and-fire predictor estimates how many tokens the audio contains, and a glancing language model sampler captures the dependencies between them. This yields accuracy comparable to an autoregressive transformer with more than 10× faster decoding, the property that matters when one GPU fleet must transcribe a contact centre. The production model, trained on 60,000 h of industrial Mandarin, is released through the FunASR toolkit together with voice-activity detection and punctuation models^[Z. Gao et al., "FunASR: A fundamental end-to-end speech recognition toolkit," Proc. INTERSPEECH, 2023. arXiv:2305.11013.], and the SeACo extension adds hotword customisation so merchants' product and brand names decode correctly^[X. Shi et al., "SeACo-Paraformer: A non-autoregressive ASR system with flexible and effective hotword customization ability," Proc. ICASSP, 2024. arXiv:2308.03266.].
+Alibaba's shopping platforms have run customer service on speech for years: by 2017, the AliMe assistant was already serving millions of voice- and text-based customer questions per day^[F.-L. Li et al., "AliMe Assist: An intelligent assistant for creating an innovative e-commerce experience," Proc. CIKM, 2017. doi:10.1145/3132847.3133169.]. The current generation of Alibaba's speech services is built on **Paraformer**^[Z. Gao, S. Zhang, I. McLoughlin and Z. Yan, "Paraformer: Fast and accurate parallel transformer for non-autoregressive end-to-end speech recognition," Proc. INTERSPEECH, 2022. arXiv:2206.08317.], a non-autoregressive model introduced in 2022 that emits the whole token sequence in a single parallel pass: a continuous integrate-and-fire predictor estimates how many tokens the audio contains, and a glancing language model sampler captures the dependencies between them. This yields accuracy comparable to an autoregressive transformer with more than 10× faster decoding, the property that matters when one GPU fleet must transcribe a contact centre. The production model, trained on 60,000 h of industrial Mandarin, is released through the FunASR toolkit together with voice-activity detection and punctuation models^[Z. Gao et al., "FunASR: A fundamental end-to-end speech recognition toolkit," Proc. INTERSPEECH, 2023. arXiv:2305.11013.], and the SeACo extension adds hotword customisation so merchants' product and brand names decode correctly^[X. Shi et al., "SeACo-Paraformer: A non-autoregressive ASR system with flexible and effective hotword customization ability," Proc. ICASSP, 2024. arXiv:2308.03266.].
 
 The contrast with the kiosk prototype is instructive: both are end-to-end neural systems deployed as quantised inference graphs, but the airport assistant needs low-latency word-by-word decoding on a single offline CPU (a streaming transducer), whereas Alibaba optimises server-side throughput over millions of utterances (non-autoregressive batch decoding). Its hotword mechanism is also exactly what the prototype's English model lacks for terms like "check-in".
 
